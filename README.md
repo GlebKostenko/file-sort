@@ -72,3 +72,7 @@
     1. В файле fourth.txt записывает ``require 'doczilla_txt/one.txt'``
 1. Запускает обработку текстовых файлов
 1. Ждет, что программа успешно выполнится
+2. Если хотите увидеть сам файл result.txt, то в методе ``deleteTempFiles`` закомментируйте строку  
+```java
+if (Files.exists(result)) result.toFile().delete();
+```
