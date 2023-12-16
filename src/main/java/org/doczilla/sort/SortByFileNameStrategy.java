@@ -22,11 +22,13 @@ public class SortByFileNameStrategy implements SortStrategy {
     }
 
     private void sort(String root, Map<String, List<String>> fileDependency, List<String> sortedFiles) {
-        Collections.sort(fileDependency.get(root));
-        for (String child : fileDependency.get(root)) {
-            if (!processed.getOrDefault(child, false)) sort(child, fileDependency, sortedFiles);
+        if (!processed.getOrDefault(root, false)) {
+            Collections.sort(fileDependency.get(root));
+            for (String child : fileDependency.get(root)) {
+                sort(child, fileDependency, sortedFiles);
+            }
+            sortedFiles.add(root);
+            processed.put(root, true);
         }
-        sortedFiles.add(root);
-        processed.put(root, true);
     }
 }
