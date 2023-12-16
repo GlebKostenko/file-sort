@@ -18,7 +18,7 @@ public class TxtDependencyManager implements DependencyManager {
     public Map<String, List<String>> buildDependencyMap(String contextPath, Predicate<Path> filterFile) throws IOException {
         Map<String, List<String>> dependencyMap = new HashMap<>();
         try {
-            List<String> fileList = findTextFiles(contextPath, filterFile);
+            List<String> fileList = findFiles(contextPath, filterFile);
             for (String filePath : fileList) {
                 List<String> dependencies = findDependencies(filePath, contextPath);
                 dependencyMap.put(filePath, dependencies);
@@ -34,7 +34,7 @@ public class TxtDependencyManager implements DependencyManager {
     }
 
     @Override
-    public List<String> findTextFiles(String contextPath, Predicate<Path> filter) throws IOException {
+    public List<String> findFiles(String contextPath, Predicate<Path> filter) throws IOException {
         return Files.walk(Paths.get(contextPath))
                 .filter(filter)
                 .map(Path::toString)
@@ -54,7 +54,7 @@ public class TxtDependencyManager implements DependencyManager {
                     if (Files.exists(Paths.get(dependencyPath))){
                         dependencies.add(dependencyPath);
                     } else {
-                        throw new PathNotExistException(dependencyPath + String.format(" it is required in ====> %s", filePath));
+                        throw new PathNotExistException(String.format("%s it is required in ====> %s", dependencyPath, filePath));
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class TxtDependencyManager implements DependencyManager {
     @Override
     public void checkForCycleDependency(String filePath, List<String> visitedFiles, Map<String, List<String>> dependencyMap) {
         if (visitedFiles.contains(filePath)) {
-            throw new CycleDependencyException(visitedFiles + "--->" + filePath);
+            throw new CycleDependencyException(String.format("%s ====> %s", visitedFiles, filePath));
         }
         visitedFiles.add(filePath);
         for (String child : dependencyMap.get(filePath)) {
